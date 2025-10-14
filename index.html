@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>papernest – Devis mutuelle santé</title>
+<style>
+  :root{
+    --pn-blue-700:#1E6CFB; --pn-blue-500:#2B88FF; --pn-blue-100:#E5F0FF;
+    --pn-green-500:#27C26A; --pn-border:#E5E7EB; --pn-text:#0B0F1E; --pn-muted:#6B7280;
+  }
+  body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:#E5F4FF; color:var(--pn-text)}
+  .wrap{max-width:960px; margin:0 auto; padding:16px}
+  .card{background:#fff; border-radius:16px; box-shadow:0 20px 50px rgba(2,8,23,.08); overflow:hidden}
+  header{padding:24px 24px 8px; background:linear-gradient(135deg, var(--pn-blue-100), #F7FBFF); border-bottom:1px solid var(--pn-border)}
+  .logo{font:700 22px/1 papernest, ui-sans-serif,system-ui; letter-spacing:.3px}
+  .step-indicator{color:var(--pn-muted); font:500 13px/1.2; margin-top:6px}
+  .progress{height:8px; background:#E6EAF2; border-radius:999px; margin:14px 0 8px; overflow:hidden}
+  .progress > i{display:block; height:100%; width:0; background:var(--pn-blue-700); transition:width .35s ease}
+  .h1{font:700 20px/1.2}
+  main{padding:22px}
+  .sub{color:var(--pn-muted); margin:8px 0 18px}
+  .grid{display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-1{grid-template-columns:1fr}
+  @media (max-width:768px){ .grid{grid-template-columns:1fr} }
+  .option{border:2px solid var(--pn-border); border-radius:12px; padding:18px; background:#fff; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; text-align:center; min-height:84px; font:600 16px; touch-action:manipulation; -webkit-tap-highlight-color:transparent}
+  .option:hover{border-color:var(--pn-blue-500)}
+  .option.selected{border-color:var(--pn-blue-700); background:var(--pn-blue-100)}
+  .group{margin-bottom:16px}
+  .label{display:block; font:600 14px; margin:0 0 6px}
+  .input,.select{width:100%; border:2px solid var(--pn-border); border-radius:10px; padding:12px 14px; font:500 16px; transition:border-color .2s}
+  .input:focus,.select:focus{outline:none; border-color:#6CA8FF}
+  .note{background:#F7F9FC; border-left:4px solid var(--pn-blue-700); padding:12px 14px; border-radius:6px; font-size:13px; color:#475569}
+  .actions{display:flex; gap:10px; margin-top:18px}
+  .btn{border:0; border-radius:10px; padding:12px 16px; font:700 15px; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent}
+  .btn-primary{background:var(--pn-green-500); color:#fff; flex:1}
+  .btn-secondary{background:#EEF2F7; color:#0B1220}
+  .step{display:none; animation:fade .25s ease}
+  .step.active{display:block}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="logo">papernest</div>
+        <div class="step-indicator">Étape <span id="stepNum">1</span>/4</div>
+        <div class="progress"><i id="bar" style="width:0%"></i></div>
+        <div class="h1">Devis mutuelle santé</div>
+      </header>
+      <main id="viewport">
+        <!-- STEP 1 -->
+        <section class="step active" id="s1">
+          <p class="sub">En seulement 2 minutes, comparez les meilleurs devis du marché !</p>
+          <div class="label" style="margin-bottom:10px">Qui souhaitez-vous assurer ?</div>
+          <div class="grid">
+            <div class="option" data-pn="insType" data-val="adulte">Un adulte</div>
+            <div class="option" data-pn="insType" data-val="adulte-enfants">Un adulte + enfant(s)</div>
+            <div class="option" data-pn="insType" data-val="couple">Un couple</div>
+            <div class="option" data-pn="insType" data-val="couple-enfants">Un couple + enfant(s)</div>
+          </div>
+          <div class="actions"><button class="btn btn-primary" id="next1" type="button">Continuer</button></div>
+        </section>
+
+        <!-- STEP 2 -->
+        <section class="step" id="s2">
+          <div class="label" style="margin-bottom:10px">Les adhérents</div>
+          <div id="adherents"></div>
+          <div id="children" style="display:none; margin-top:12px">
+            <div class="group">
+              <label class="label">Combien d'enfants avez-vous ?</label>
+              <input type="number" class="input" id="childrenCount" min="0" max="10" value="1" />
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" data-nav="prev" type="button">Retour</button>
+            <button class="btn btn-primary" data-nav="next" type="button">Continuer</button>
+          </div>
+        </section>
+
+        <!-- STEP 3 -->
+        <section class="step" id="s3">
+          <div class="group">
+            <label class="label">Quel est le code postal ou la ville de votre foyer ?</label>
+            <input type="text" class="input" id="postal" placeholder="Code postal ou ville" inputmode="numeric" />
+          </div>
+          <div class="group">
+            <label class="label">Êtes-vous assuré(e) actuellement ?</label>
+            <div class="grid">
+              <div class="option" data-pn="insured" data-val="yes">Oui</div>
+              <div class="option" data-pn="insured" data-val="no">Non</div>
+            </div>
+          </div>
+          <div id="contractExtra" style="display:none">
+            <div class="group">
+              <label class="label">Mois d'échéance du contrat</label>
+              <select class="select" id="contractMonth">
+                <option value="">Sélectionner un mois</option>
+                <option value="01">Janvier</option><option value="02">Février</option><option value="03">Mars</option>
+                <option value="04">Avril</option><option value="05">Mai</option><option value="06">Juin</option>
+                <option value="07">Juillet</option><option value="08">Août</option><option value="09">Septembre</option>
+                <option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>
+              </select>
+            </div>
+            <div class="group">
+              <label class="label">Mon contrat a plus d'un an</label>
+              <div class="grid">
+                <div class="option" data-pn="contractAge" data-val="yes">Oui</div>
+                <div class="option" data-pn="contractAge" data-val="no">Non</div>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <label class="label">À quelle date souhaitez-vous être assuré(e) ?</label>
+            <select class="select" id="startDate"></select>
+            <div class="note" style="margin-top:8px">Vous pouvez aussi comparer sans choisir de date précise.</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" data-nav="prev" type="button">Retour</button>
+            <button class="btn btn-primary" data-nav="next" type="button">Continuer</button>
+          </div>
+        </section>
+
+        <!-- STEP 4 -->
+        <section class="step" id="s4">
+          <div class="note">🔒 <b>On protège vos infos</b> — Email pour envoyer les devis, téléphone uniquement pour échange avec un conseiller.</div>
+          <div class="grid">
+            <div class="group">
+              <label class="label">Prénom</label>
+              <input class="input" id="first" autocomplete="given-name" />
+            </div>
+            <div class="group">
+              <label class="label">Nom</label>
+              <input class="input" id="last" autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="group">
+            <label class="label">Adresse email</label>
+            <input class="input" id="email" type="email" autocomplete="email" />
+          </div>
+          <div class="group">
+            <label class="label">Téléphone</label>
+            <input class="input" id="phone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" />
+          </div>
+          <div class="group" style="display:flex;gap:10px;align-items:flex-start">
+            <input id="terms" type="checkbox" style="margin-top:5px"/>
+            <label for="terms" class="sub" style="margin:0">J'accepte les <a href="#" style="color:#1E6CFB">conditions générales</a> et d'être rappelé si je demande une mise en relation.</label>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" data-nav="prev" type="button">Retour</button>
+            <button class="btn btn-primary" id="submit" type="button">Accédez à vos devis</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+<script>
+/* ===== CONFIG ===== */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRbKPYBLiGc8G4GPUaj2sRCrgbnPk14VYP_NUu9E-CtnTqmhosIQ5aV19RdT-uiCNwlg/exec'; // <-- metti il tuo URL Apps Script
+const THANKYOU_URL = ''; // opzionale: es. '/merci'
+
+/* ===== STATE ===== */
+const state = JSON.parse(localStorage.getItem('pnFormHI') || '{}');
+state.step = state.step || 1;
+state.insuranceType = state.insuranceType || '';
+state.adherents = state.adherents || [];
+state.childrenCount = state.childrenCount || 0;
+state.postalCode = state.postalCode || '';
+state.currentlyInsured = state.currentlyInsured || '';
+state.contractMonth = state.contractMonth || '';
+state.contractAge = state.contractAge || '';
+state.startDate = state.startDate || '';
+state.firstName = state.firstName || '';
+state.lastName = state.lastName || '';
+state.email = state.email || '';
+state.phone = state.phone || '';
+const persist = () => localStorage.setItem('pnFormHI', JSON.stringify(state));
+
+/* ===== HELPERS ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const bar = $('#bar'), stepNum = $('#stepNum');
+
+function setProgress(){ bar.style.width = (state.step/4)*100 + '%'; stepNum.textContent = state.step; }
+function showStep(n){
+  state.step = n; persist();
+  $$('.step').forEach((el,i)=> el.classList.toggle('active', i === n-1));
+  setProgress();
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event:'pap_form_step', step:n, form:'HI_page'});
+}
+
+function populateStartDates(){
+  const sel = $('#startDate');
+  const f = d => d.toLocaleDateString('fr-FR',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+  const t0=new Date(), t1=new Date(Date.now()+86400000), t7=new Date(Date.now()+7*86400000);
+  sel.innerHTML = `
+    <option value="today">Aujourd'hui - ${f(t0)}</option>
+    <option value="tomorrow">Demain - ${f(t1)}</option>
+    <option value="week">Dans une semaine - ${f(t7)}</option>
+    <option value="month">Dans un mois - grâce à la RIA</option>
+    <option value="undecided">Je ne suis pas décidé(e), je veux juste comparer</option>`;
+  sel.value = state.startDate || 'tomorrow';
+}
+
+function renderAdherents(){
+  const box = $('#adherents');
+  const type = state.insuranceType;
+  if (!type){ box.innerHTML = ''; return; }
+  const tpl = (label)=>`
+    <div class="grid grid-1" style="margin-bottom:8px">
+      <div class="group">
+        <div class="label">${label} — Date de naissance</div>
+        <input type="date" class="input" data-role="${label}" data-key="dob">
+      </div>
+      <div class="group">
+        <div class="label">${label} — Statut professionnel</div>
+        <select class="select" data-role="${label}" data-key="job">
+          <option value="">Sélectionner</option>
+          <option value="salarie-non-cadre">Salarié(e) non-cadre</option>
+          <option value="cadre">Salarié(e) cadre</option>
+          <option value="independant">Indépendant(e)</option>
+          <option value="retraite">Retraité(e)</option>
+          <option value="etudiant">Étudiant(e)</option>
+          <option value="sans-emploi">Sans emploi</option>
+        </select>
+      </div>
+    </div>`;
+  let html = tpl('Vous');
+  if (type === 'couple' || type === 'couple-enfants') html += tpl('Votre conjoint');
+  box.innerHTML = html;
+
+  $('#children').style.display = type.includes('enfants') ? 'block' : 'none';
+
+  const dict = Object.fromEntries((state.adherents||[]).map(a=>[a.role,a]));
+  $$('[data-role]').forEach(el=>{
+    const role=el.getAttribute('data-role'), key=el.getAttribute('data-key');
+    el.value = (dict[role] && dict[role][key]) || '';
+    el.addEventListener('change', ()=>{
+      const arr = (state.adherents||[]).filter(a=>a.role!==role);
+      arr.push({
+        role,
+        dob: $(`[data-role="${role}"][data-key="dob"]`).value,
+        job: $(`[data-role="${role}"][data-key="job"]`).value
+      });
+      state.adherents = arr; persist();
+    });
+  });
+
+  if ($('#childrenCount')) {
+    $('#childrenCount').value = state.childrenCount || (type.includes('enfants') ? 1 : 0);
+    $('#childrenCount').addEventListener('input', e=>{
+      state.childrenCount = parseInt(e.target.value||0,10); persist();
+    });
+  }
+}
+
+/* ===== Event delegation (mobile safe) ===== */
+const viewport = $('#viewport');
+
+function onOption(el){
+  if (!el.classList.contains('option') || !el.dataset.pn) return;
+  const group = el.dataset.pn;
+  document.querySelectorAll(`.option[data-pn="${group}"]`).forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val || '';
+  if (group==='insType'){ state.insuranceType = val; persist(); }
+  if (group==='insured'){ state.currentlyInsured = val; persist(); $('#contractExtra').style.display = (val==='yes')?'block':'none'; }
+  if (group==='contractAge'){ state.contractAge = val; persist(); }
+}
+
+function nextFrom1(){
+  if (!state.insuranceType){ alert('Sélectionnez qui vous souhaitez assurer'); return; }
+  renderAdherents(); showStep(2);
+}
+function nextFrom2(){
+  const youDob = $('[data-role="Vous"][data-key="dob"]')?.value || '';
+  const youJob = $('[data-role="Vous"][data-key="job"]')?.value || '';
+  if (!youDob || !youJob){ alert('Complétez la date de naissance et le statut professionnel'); return; }
+  if (state.insuranceType.includes('enfants')) state.childrenCount = parseInt($('#childrenCount').value||0,10);
+  persist(); showStep(3);
+}
+function nextFrom3(){
+  const cp = $('#postal').value.trim();
+  if (!cp){ alert('Entrez votre code postal'); return; }
+  state.postalCode = cp;
+  state.contractMonth = $('#contractMonth')?.value || '';
+  state.startDate = $('#startDate').value || 'tomorrow';
+  persist(); showStep(4);
+}
+
+async function submitForm(){
+  state.firstName = $('#first').value.trim();
+  state.lastName  = $('#last').value.trim();
+  state.email     = $('#email').value.trim();
+  state.phone     = $('#phone').value.trim();
+
+  if (!$('#terms').checked){ alert('Veuillez accepter les conditions générales'); return; }
+  if (!state.firstName || !state.lastName){ alert('Prénom et Nom requis'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email)){ alert('Email non valide'); return; }
+  if (!/^(\+33|0)\s?\d{9}$/.test(state.phone.replace(/\s/g,''))){ alert('Téléphone FR non valide'); return; }
+
+  const url = new URL(location.href), get = k => url.searchParams.get(k)||'';
+  const payload = {
+    ...state,
+    utm_source:get('utm_source'), utm_medium:get('utm_medium'), utm_campaign:get('utm_campaign'),
+    utm_content:get('utm_content'), utm_term:get('utm_term'),
+    gclid:get('gclid'), fbclid:get('fbclid'),
+    page: location.pathname + location.search,
+    userAgent: navigator.userAgent,
+    timestamp: new Date().toISOString()
+  };
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event:'pap_form_submit', form:'HI_page'});
+
+  try{
+    await fetch(GAS_URL, {
+      method:'POST',
+      mode:'no-cors',                    // evita preflight su Apps Script
+      headers:{'Content-Type':'text/plain;charset=utf-8'}, // niente preflight
+      body: JSON.stringify(payload)
+    });
+    localStorage.removeItem('pnFormHI');
+    if (THANKYOU_URL) location.href = THANKYOU_URL;
+    else alert('Merci ! Vos devis sont en cours de préparation.');
+  }catch(err){
+    console.error(err);
+    alert('Erreur d\'envoi. Réessayez plus tard svp.');
+  }
+}
+
+// Delegation
+let lastTap = 0;
+['click','touchend','pointerup'].forEach(evt=>{
+  viewport.addEventListener(evt, (e)=>{
+    const now = Date.now();
+    if (evt!=='click' && (now-lastTap)<250) return;
+    lastTap = now;
+
+    const opt = e.target.closest('.option[data-pn]');
+    if (opt){ e.preventDefault(); onOption(opt); return; }
+
+    if (e.target.closest('#next1')){ e.preventDefault(); nextFrom1(); return; }
+
+    const prev = e.target.closest('[data-nav="prev"]');
+    if (prev){
+      e.preventDefault();
+      const step = e.target.closest('.step')?.id;
+      if (step==='s2') showStep(1);
+      else if (step==='s3') showStep(2);
+      else if (step==='s4') showStep(3);
+      return;
+    }
+
+    const next = e.target.closest('[data-nav="next"]');
+    if (next){
+      e.preventDefault();
+      const step = e.target.closest('.step')?.id;
+      if (step==='s2') nextFrom2();
+      else if (step==='s3') nextFrom3();
+      return;
+    }
+
+    if (e.target.closest('#submit')){ e.preventDefault(); submitForm(); return; }
+  }, {passive:false});
+});
+
+// Init
+(function init(){
+  populateStartDates();
+  renderAdherents();
+  setProgress();
+  if (state.currentlyInsured==='yes') $('#contractExtra').style.display='block';
+  showStep(state.step || 1);
+})();
+</script>
+</body>
+</html>

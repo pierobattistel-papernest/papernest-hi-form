@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>papernest – Merci !</title>
+  <style>
+    :root{
+      --pn-blue-700:#1E6CFB; --pn-blue-500:#2B88FF; --pn-blue-100:#E5F0FF;
+      --pn-green-500:#27C26A; --pn-border:#E5E7EB; --pn-text:#0B0F1E; --pn-muted:#6B7280;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:#E5F4FF; color:var(--pn-text)}
+    .wrap{min-height:100dvh; display:grid; place-items:center; padding:20px}
+    .card{width:min(720px,100%); background:#fff; border-radius:20px; box-shadow:0 20px 50px rgba(2,8,23,.08); overflow:hidden}
+    header{padding:28px 24px 14px; background:linear-gradient(135deg, var(--pn-blue-100), #F7FBFF); border-bottom:1px solid var(--pn-border)}
+    .logo{font:700 22px/1 papernest, ui-sans-serif,system-ui; letter-spacing:.3px}
+    main{padding:28px 22px}
+    h1{font:800 22px/1.25 ui-sans-serif,system-ui; margin:0 0 8px}
+    p{margin:0 0 14px; color:#334155}
+    .muted{color:var(--pn-muted)}
+    .success{
+      width:64px; height:64px; border-radius:999px; display:grid; place-items:center;
+      background:rgba(39,194,106,.1); color:var(--pn-green-500); margin:8px 0 14px
+    }
+    .row{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px}
+    .btn{
+      border:0; border-radius:12px; padding:12px 16px; font:700 15px ui-sans-serif,system-ui; cursor:pointer
+    }
+    .btn-primary{background:var(--pn-green-500); color:#fff}
+    .btn-secondary{background:#EEF2F7; color:#0B1220}
+    .hint{font-size:13px; color:var(--pn-muted); margin-top:8px}
+    .center{display:flex; flex-direction:column; align-items:center; text-align:center}
+    .countdown{font-weight:700}
+    @media (min-width:720px){
+      main{padding:36px 30px}
+      h1{font-size:24px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="logo">papernest</div>
+      </header>
+      <main>
+        <div class="center">
+          <div class="success" aria-hidden="true">
+            <!-- check icon -->
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1>Merci ! Nous préparons vos devis</h1>
+          <p>Votre demande a bien été enregistrée. Vous allez recevoir un récapitulatif par email et, si vous l’avez demandé, un conseiller pourra vous appeler.</p>
+          <p class="muted">Vous pouvez fermer cette page, ou continuer vers notre site.</p>
+
+          <div class="row" style="margin-top:20px">
+            <a id="ctaHome" class="btn btn-primary" href="#">Continuer</a>
+            <button id="ctaBack" class="btn btn-secondary" type="button">Revenir à la page précédente</button>
+          </div>
+
+          <div id="autoBox" class="hint" style="display:none">
+            Redirection dans <span id="count" class="countdown">5</span>…  
+            <a id="cancel" href="#" style="margin-left:6px">annuler</a>
+          </div>
+
+          <p class="hint" style="margin-top:14px">Besoin d’aide&nbsp;? Écrivez-nous à <a href="mailto:contact@papernest.com">contact@papernest.com</a>.</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // --- Config (modifica se vuoi un fallback fisso) ---
+    const FALLBACK_URL = '/'; // es. '/mutuelle' o tua homepage sullo stesso host
+
+    // dataLayer event (se hai GA/GTM sulla pagina)
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({event:'pap_form_thank_you', form:'HI_page'});
+
+    // Leggi parametri: ?return=URL&delay=5 (opzionale)
+    const params = new URLSearchParams(location.search);
+    const returnURL = params.get('return');          // se presente → usato per il bottone e redirect
+    const delaySec  = Math.max(0, parseInt(params.get('delay') || '5', 10)); // default 5s
+
+    // Imposta il bottone principale
+    const homeHref = returnURL || FALLBACK_URL;
+    const ctaHome = document.getElementById('ctaHome');
+    ctaHome.href = homeHref;
+
+    // Bottone "back"
+    document.getElementById('ctaBack').addEventListener('click', ()=>{
+      if (document.referrer) history.back();
+      else location.href = homeHref;
+    });
+
+    // Redirect automatico se abbiamo ?return=
+    const autoBox = document.getElementById('autoBox');
+    const countEl = document.getElementById('count');
+    const cancel  = document.getElementById('cancel');
+    let timer1 = null, timer2 = null, remaining = delaySec;
+
+    if (returnURL && delaySec > 0) {
+      autoBox.style.display = 'block';
+      countEl.textContent = remaining;
+      timer1 = setInterval(()=>{ remaining--; countEl.textContent = Math.max(0, remaining); }, 1000);
+      timer2 = setTimeout(()=>{ location.href = returnURL; }, delaySec * 1000);
+      cancel.addEventListener('click', (e)=>{ e.preventDefault(); clearInterval(timer1); clearTimeout(timer2); autoBox.style.display='none'; });
+    }
+  </script>
+</body>
+</html>

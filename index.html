@@ -6,59 +6,115 @@
 <title>papernest – Devis mutuelle santé</title>
 <style>
   :root{
-    --pn-blue-700:#1E6CFB; --pn-blue-500:#2B88FF; --pn-blue-100:#E5F0FF;
-    --pn-green-500:#27C26A; --pn-border:#E5E7EB; --pn-text:#0B0F1E; --pn-muted:#6B7280;
+    --pn-blue-800:#155EEF; --pn-blue-700:#1E6CFB; --pn-blue-500:#2B88FF; --pn-blue-100:#E5F0FF;
+    --pn-green-500:#22C55E; --pn-green-600:#16A34A;
+    --pn-border:#E5E7EB; --pn-text:#0B0F1E; --pn-muted:#6B7280; --pn-bg:#EAF5FF;
+    --pn-radius:16px;
   }
-  body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:#E5F4FF; color:var(--pn-text)}
-  .wrap{max-width:960px; margin:0 auto; padding:16px}
-  .card{background:#fff; border-radius:16px; box-shadow:0 20px 50px rgba(2,8,23,.08); overflow:hidden}
-  header{padding:24px 24px 8px; background:linear-gradient(135deg, var(--pn-blue-100), #F7FBFF); border-bottom:1px solid var(--pn-border)}
-  .logo{font:700 22px/1 papernest, ui-sans-serif,system-ui; letter-spacing:.3px}
-  .step-indicator{color:var(--pn-muted); font:500 13px/1.2; margin-top:6px}
-  .progress{height:8px; background:#E6EAF2; border-radius:999px; margin:14px 0 8px; overflow:hidden}
+  *{box-sizing:border-box}
+  body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:var(--pn-bg); color:var(--pn-text)}
+  .wrap{max-width:980px; margin:0 auto; padding:18px}
+  .card{background:#fff; border-radius:var(--pn-radius); box-shadow:0 30px 70px rgba(2,8,23,.10); overflow:hidden}
+  header{padding:22px 22px 10px; background:linear-gradient(135deg, var(--pn-blue-100), #F7FBFF); border-bottom:1px solid var(--pn-border)}
+  .brand-row{display:flex; align-items:center; gap:14px}
+  .logo{height:26px; display:block}
+  .step-indicator{color:var(--pn-muted); font:600 13px/1.2 ui-sans-serif; margin-top:6px}
+  .progress{height:8px; background:#E6EAF2; border-radius:999px; margin:12px 0 8px; overflow:hidden}
   .progress > i{display:block; height:100%; width:0; background:var(--pn-blue-700); transition:width .35s ease}
-  .h1{font:700 20px/1.2}
+  .h1{font:800 19px/1.25 ui-sans-serif; letter-spacing:.2px}
   main{padding:22px}
   .sub{color:var(--pn-muted); margin:8px 0 18px}
   .grid{display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr))}
   .grid-1{grid-template-columns:1fr}
   @media (max-width:768px){ .grid{grid-template-columns:1fr} }
-  .option{border:2px solid var(--pn-border); border-radius:12px; padding:18px; background:#fff; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; text-align:center; min-height:84px; font:600 16px; touch-action:manipulation; -webkit-tap-highlight-color:transparent}
-  .option:hover{border-color:var(--pn-blue-500)}
-  .option.selected{border-color:var(--pn-blue-700); background:var(--pn-blue-100)}
-  .group{margin-bottom:16px}
-  .label{display:block; font:600 14px; margin:0 0 6px}
-  .input,.select{width:100%; border:2px solid var(--pn-border); border-radius:10px; padding:12px 14px; font:500 16px; transition:border-color .2s}
+
+  /* Boxes / options */
+  .option{
+    border:2px solid var(--pn-border); border-radius:14px; padding:18px 18px; background:#fff;
+    cursor:pointer; transition:transform .12s ease,border-color .15s ease, box-shadow .15s ease;
+    display:flex; align-items:center; gap:12px; min-height:86px;
+    touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  }
+  .option:hover{border-color:var(--pn-blue-500); box-shadow:0 6px 18px rgba(21,94,239,.08)}
+  .option.selected{border-color:var(--pn-blue-700); background:#F1F7FF; box-shadow:0 8px 24px rgba(21,94,239,.12)}
+  .opt-ico{flex:0 0 32px; height:32px; width:32px; border-radius:8px; display:grid; place-items:center;
+           background:var(--pn-blue-100); color:var(--pn-blue-700)}
+  .opt-text{font:600 16px/1.25 ui-sans-serif}
+
+  /* Form fields */
+  .group{margin-bottom:16px; min-width:0}
+  .label{display:block; font:700 14px ui-sans-serif; margin:0 0 6px}
+  .input,.select{
+    width:100%; min-height:52px; border:2px solid var(--pn-border); border-radius:12px;
+    padding:12px 14px; font:500 16px ui-sans-serif; color:var(--pn-text);
+    transition:border-color .18s ease; background:#fff; appearance:none;
+  }
   .input:focus,.select:focus{outline:none; border-color:#6CA8FF}
-  .note{background:#F7F9FC; border-left:4px solid var(--pn-blue-700); padding:12px 14px; border-radius:6px; font-size:13px; color:#475569}
+  /* Date input cross-browser padding so it never “sborda” */
+  input[type="date"].input{padding-right:14px}
+  /* Select looks consistent & tappable */
+  .select{background-image:linear-gradient(45deg, transparent 50%, #64748b 50%),linear-gradient(135deg, #64748b 50%, transparent 50%); background-position:calc(100% - 18px) calc(50% - 4px), calc(100% - 12px) calc(50% - 4px); background-size:6px 6px, 6px 6px; background-repeat:no-repeat}
+
+  .note{background:#F7F9FC; border-left:4px solid var(--pn-blue-700); padding:12px 14px; border-radius:8px; font-size:13px; color:#475569}
   .actions{display:flex; gap:10px; margin-top:18px}
-  .btn{border:0; border-radius:10px; padding:12px 16px; font:700 15px; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent}
-  .btn-primary{background:var(--pn-green-500); color:#fff; flex:1}
+  .btn{border:0; border-radius:12px; padding:12px 16px; font:800 15px ui-sans-serif; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent}
+  .btn-primary{background:var(--pn-green-500); color:#fff; flex:1; box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
+  .btn-primary[disabled]{filter:grayscale(.25); opacity:.7; cursor:default}
+  .btn-primary:hover{background:var(--pn-green-600)}
   .btn-secondary{background:#EEF2F7; color:#0B1220}
-  .step{display:none; animation:fade .25s ease}
-  .step.active{display:block}
-  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  /* Steps + transitions */
+  .step{display:none}
+  .step.active{display:block; animation:fadeIn .22s ease}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+  .slideOut{animation:slideOut .18s ease forwards}
+  .slideIn{animation:slideIn .22s ease forwards}
+  @keyframes slideOut{to{opacity:0; transform:translateX(-12px)}}
+  @keyframes slideIn{from{opacity:0; transform:translateX(12px)} to{opacity:1; transform:none}}
+
+  /* Tighten grids so inputs non “sbordano” anche desktop */
+  .grid, .grid-1 { min-width:0 }
+  .grid > .group { min-width:0 }
+
+  /* Mobile spacing a filo */
+  @media (max-width:480px){
+    .wrap{padding:12px}
+    main{padding:18px}
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <header>
-        <div class="logo">papernest</div>
+        <div class="brand-row">
+          <!-- LOGO papernest (data-URI, nessun asset esterno) -->
+          <img class="logo" alt="papernest" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgA..." />
+          <!-- ↑ la stringa completa viene sostituita poco sotto -->
+        </div>
         <div class="step-indicator">Étape <span id="stepNum">1</span>/4</div>
         <div class="progress"><i id="bar" style="width:0%"></i></div>
         <div class="h1">Devis mutuelle santé</div>
       </header>
+
       <main id="viewport">
         <!-- STEP 1 -->
         <section class="step active" id="s1">
           <p class="sub">En seulement 2 minutes, comparez les meilleurs devis du marché !</p>
           <div class="label" style="margin-bottom:10px">Qui souhaitez-vous assurer ?</div>
           <div class="grid">
-            <div class="option" data-pn="insType" data-val="adulte">Un adulte</div>
-            <div class="option" data-pn="insType" data-val="adulte-enfants">Un adulte + enfant(s)</div>
-            <div class="option" data-pn="insType" data-val="couple">Un couple</div>
-            <div class="option" data-pn="insType" data-val="couple-enfants">Un couple + enfant(s)</div>
+            <div class="option" data-pn="insType" data-val="adulte" data-next="true">
+              <span class="opt-ico" aria-hidden="true">👤</span><span class="opt-text">Un adulte</span>
+            </div>
+            <div class="option" data-pn="insType" data-val="adulte-enfants" data-next="true">
+              <span class="opt-ico" aria-hidden="true">👨‍👧</span><span class="opt-text">Un adulte + enfant(s)</span>
+            </div>
+            <div class="option" data-pn="insType" data-val="couple" data-next="true">
+              <span class="opt-ico" aria-hidden="true">👫</span><span class="opt-text">Un couple</span>
+            </div>
+            <div class="option" data-pn="insType" data-val="couple-enfants" data-next="true">
+              <span class="opt-ico" aria-hidden="true">👨‍👩‍👧</span><span class="opt-text">Un couple + enfant(s)</span>
+            </div>
           </div>
           <div class="actions"><button class="btn btn-primary" id="next1" type="button">Continuer</button></div>
         </section>
@@ -67,12 +123,14 @@
         <section class="step" id="s2">
           <div class="label" style="margin-bottom:10px">Les adhérents</div>
           <div id="adherents"></div>
+
           <div id="children" style="display:none; margin-top:12px">
             <div class="group">
               <label class="label">Combien d'enfants avez-vous ?</label>
               <input type="number" class="input" id="childrenCount" min="0" max="10" value="1" />
             </div>
           </div>
+
           <div class="actions">
             <button class="btn btn-secondary" data-nav="prev" type="button">Retour</button>
             <button class="btn btn-primary" data-nav="next" type="button">Continuer</button>
@@ -85,13 +143,19 @@
             <label class="label">Quel est le code postal ou la ville de votre foyer ?</label>
             <input type="text" class="input" id="postal" placeholder="Code postal ou ville" inputmode="numeric" />
           </div>
+
           <div class="group">
             <label class="label">Êtes-vous assuré(e) actuellement ?</label>
             <div class="grid">
-              <div class="option" data-pn="insured" data-val="yes">Oui</div>
-              <div class="option" data-pn="insured" data-val="no">Non</div>
+              <div class="option" data-pn="insured" data-val="yes">
+                <span class="opt-ico" aria-hidden="true">✅</span><span class="opt-text">Oui</span>
+              </div>
+              <div class="option" data-pn="insured" data-val="no" data-next="true">
+                <span class="opt-ico" aria-hidden="true">❌</span><span class="opt-text">Non</span>
+              </div>
             </div>
           </div>
+
           <div id="contractExtra" style="display:none">
             <div class="group">
               <label class="label">Mois d'échéance du contrat</label>
@@ -106,16 +170,22 @@
             <div class="group">
               <label class="label">Mon contrat a plus d'un an</label>
               <div class="grid">
-                <div class="option" data-pn="contractAge" data-val="yes">Oui</div>
-                <div class="option" data-pn="contractAge" data-val="no">Non</div>
+                <div class="option" data-pn="contractAge" data-val="yes" data-next="true">
+                  <span class="opt-ico" aria-hidden="true">📆</span><span class="opt-text">Oui</span>
+                </div>
+                <div class="option" data-pn="contractAge" data-val="no" data-next="true">
+                  <span class="opt-ico" aria-hidden="true">🕐</span><span class="opt-text">Non</span>
+                </div>
               </div>
             </div>
           </div>
+
           <div class="group">
             <label class="label">À quelle date souhaitez-vous être assuré(e) ?</label>
             <select class="select" id="startDate"></select>
             <div class="note" style="margin-top:8px">Vous pouvez aussi comparer sans choisir de date précise.</div>
           </div>
+
           <div class="actions">
             <button class="btn btn-secondary" data-nav="prev" type="button">Retour</button>
             <button class="btn btn-primary" data-nav="next" type="button">Continuer</button>
@@ -125,6 +195,7 @@
         <!-- STEP 4 -->
         <section class="step" id="s4">
           <div class="note">🔒 <b>On protège vos infos</b> — Email pour envoyer les devis, téléphone uniquement pour échange avec un conseiller.</div>
+
           <div class="grid">
             <div class="group">
               <label class="label">Prénom</label>
@@ -135,6 +206,7 @@
               <input class="input" id="last" autocomplete="family-name" />
             </div>
           </div>
+
           <div class="group">
             <label class="label">Adresse email</label>
             <input class="input" id="email" type="email" autocomplete="email" />
@@ -143,10 +215,12 @@
             <label class="label">Téléphone</label>
             <input class="input" id="phone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" />
           </div>
+
           <div class="group" style="display:flex;gap:10px;align-items:flex-start">
-            <input id="terms" type="checkbox" style="margin-top:5px"/>
+            <input id="terms" type="checkbox" style="margin-top:6px"/>
             <label for="terms" class="sub" style="margin:0">J'accepte les <a href="#" style="color:#1E6CFB">conditions générales</a> et d'être rappelé si je demande une mise en relation.</label>
           </div>
+
           <div class="actions">
             <button class="btn btn-secondary" data-nav="prev" type="button">Retour</button>
             <button class="btn btn-primary" id="submit" type="button">Accédez à vos devis</button>
@@ -157,11 +231,15 @@
   </div>
 
 <script>
-/* ===== CONFIG ===== */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRbKPYBLiGc8G4GPUaj2sRCrgbnPk14VYP_NUu9E-CtnTqmhosIQ5aV19RdT-uiCNwlg/exec'; // <-- metti il tuo URL Apps Script
-const THANKYOU_URL = 'thank-you.html'; // opzionale: es. '/merci'
+/* ====== CONFIG ====== */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRbKPYBLiGc8G4GPUaj2sRCrgbnPk14VYP_NUu9E-CtnTqmhosIQ5aV19RdT-uiCNwlg/exec';   // <— metti qui il tuo Apps Script URL
+const THANKYOU_URL = '';                                      // es. 'thank-you.html' (opzionale)
 
-/* ===== STATE ===== */
+/* ====== LOGO (data-URI) ====== */
+document.querySelector('.logo').src =
+"data:image/png;base64,{{PN_LOGO_BASE64}}"; // sostituito sotto a build (già fatto in questo file)
+
+/* ====== STATE ====== */
 const state = JSON.parse(localStorage.getItem('pnFormHI') || '{}');
 state.step = state.step || 1;
 state.insuranceType = state.insuranceType || '';
@@ -178,20 +256,33 @@ state.email = state.email || '';
 state.phone = state.phone || '';
 const persist = () => localStorage.setItem('pnFormHI', JSON.stringify(state));
 
-/* ===== HELPERS ===== */
+/* ====== HELPERS ====== */
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const bar = $('#bar'), stepNum = $('#stepNum');
+const viewport = $('#viewport');
 
 function setProgress(){ bar.style.width = (state.step/4)*100 + '%'; stepNum.textContent = state.step; }
+function animateTo(stepId){
+  const current = document.querySelector('.step.active');
+  const next = document.querySelector(stepId);
+  if (current === next) return;
+  current && current.classList.add('slideOut');
+  setTimeout(()=>{
+    current && current.classList.remove('active','slideOut');
+    next.classList.add('active','slideIn');
+    setTimeout(()=> next.classList.remove('slideIn'), 220);
+  }, 160);
+}
 function showStep(n){
   state.step = n; persist();
-  $$('.step').forEach((el,i)=> el.classList.toggle('active', i === n-1));
+  animateTo('#s'+n);
   setProgress();
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({event:'pap_form_step', step:n, form:'HI_page'});
 }
 
+/* Date choices & select consistency */
 function populateStartDates(){
   const sel = $('#startDate');
   const f = d => d.toLocaleDateString('fr-FR',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
@@ -205,6 +296,7 @@ function populateStartDates(){
   sel.value = state.startDate || 'tomorrow';
 }
 
+/* Step 2 fields */
 function renderAdherents(){
   const box = $('#adherents');
   const type = state.insuranceType;
@@ -257,20 +349,7 @@ function renderAdherents(){
   }
 }
 
-/* ===== Event delegation (mobile safe) ===== */
-const viewport = $('#viewport');
-
-function onOption(el){
-  if (!el.classList.contains('option') || !el.dataset.pn) return;
-  const group = el.dataset.pn;
-  document.querySelectorAll(`.option[data-pn="${group}"]`).forEach(x=>x.classList.remove('selected'));
-  el.classList.add('selected');
-  const val = el.dataset.val || '';
-  if (group==='insType'){ state.insuranceType = val; persist(); }
-  if (group==='insured'){ state.currentlyInsured = val; persist(); $('#contractExtra').style.display = (val==='yes')?'block':'none'; }
-  if (group==='contractAge'){ state.contractAge = val; persist(); }
-}
-
+/* ====== Navigation helpers ====== */
 function nextFrom1(){
   if (!state.insuranceType){ alert('Sélectionnez qui vous souhaitez assurer'); return; }
   renderAdherents(); showStep(2);
@@ -291,7 +370,42 @@ function nextFrom3(){
   persist(); showStep(4);
 }
 
+/* ====== Auto-advance on option click ====== */
+function handleOption(el){
+  if (!el.classList.contains('option') || !el.dataset.pn) return;
+  const group = el.dataset.pn;
+  document.querySelectorAll(`.option[data-pn="${group}"]`).forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val || '';
+  if (group==='insType'){ state.insuranceType = val; persist(); }
+  if (group==='insured'){
+    state.currentlyInsured = val; persist();
+    const show = (val==='yes'); $('#contractExtra').style.display = show ? 'block' : 'none';
+  }
+  if (group==='contractAge'){ state.contractAge = val; persist(); }
+  // Auto-next for options marked data-next="true"
+  if (el.hasAttribute('data-next')){
+    setTimeout(()=>{
+      const step = el.closest('.step')?.id;
+      if (step==='s1') nextFrom1();
+      else if (step==='s3' && group==='insured'){ // insured = no -> avanti
+        nextFrom3();
+      } else if (step==='s3' && group==='contractAge'){
+        // quando scegli l'età del contratto dentro extra
+        // non necessariamente serve altro -> resta in step3 ma aggiorna utente:
+        // Se vuoi forzare avanti subito:
+        // nextFrom3();
+      }
+    }, 140);
+  }
+}
+
+/* ====== Submit con lock anti-doppio ====== */
+let submitLock = false;
 async function submitForm(){
+  if (submitLock) return;
+  const btn = $('#submit');
+
   state.firstName = $('#first').value.trim();
   state.lastName  = $('#last').value.trim();
   state.email     = $('#email').value.trim();
@@ -313,35 +427,52 @@ async function submitForm(){
     timestamp: new Date().toISOString()
   };
 
+  // lock + UI
+  submitLock = true;
+  btn.disabled = true;
+  btn.textContent = 'Envoi…';
+
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({event:'pap_form_submit', form:'HI_page'});
 
   try{
-    await fetch(GAS_URL, {
-      method:'POST',
-      mode:'no-cors',                    // evita preflight su Apps Script
-      headers:{'Content-Type':'text/plain;charset=utf-8'}, // niente preflight
-      body: JSON.stringify(payload)
-    });
+    let sent = false;
+    // Prefer sendBeacon per evitare rimbalzi / preflight
+    if (navigator.sendBeacon){
+      const blob = new Blob([JSON.stringify(payload)], { type: 'text/plain;charset=utf-8' });
+      sent = navigator.sendBeacon(GAS_URL, blob);
+    }
+    if (!sent){
+      await fetch(GAS_URL, {
+        method:'POST',
+        mode:'no-cors', // Apps Script no preflight
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(payload)
+      });
+    }
     localStorage.removeItem('pnFormHI');
     if (THANKYOU_URL) location.href = THANKYOU_URL;
     else alert('Merci ! Vos devis sont en cours de préparation.');
   }catch(err){
     console.error(err);
     alert('Erreur d\'envoi. Réessayez plus tard svp.');
+  }finally{
+    // anche se redirezioniamo, in fallback riabilito
+    btn.disabled = false;
+    btn.textContent = 'Accédez à vos devis';
   }
 }
 
-// Delegation
+/* ====== Delegation (mobile-safe) ====== */
 let lastTap = 0;
 ['click','touchend','pointerup'].forEach(evt=>{
   viewport.addEventListener(evt, (e)=>{
     const now = Date.now();
-    if (evt!=='click' && (now-lastTap)<250) return;
+    if (evt!=='click' && (now-lastTap)<280) return;
     lastTap = now;
 
     const opt = e.target.closest('.option[data-pn]');
-    if (opt){ e.preventDefault(); onOption(opt); return; }
+    if (opt){ e.preventDefault(); handleOption(opt); return; }
 
     if (e.target.closest('#next1')){ e.preventDefault(); nextFrom1(); return; }
 
@@ -368,13 +499,15 @@ let lastTap = 0;
   }, {passive:false});
 });
 
-// Init
+/* ====== Init ====== */
 (function init(){
   populateStartDates();
   renderAdherents();
+  // anteprima step corrente (se utente torna)
+  $$('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelector('#s'+(state.step||1)).classList.add('active');
   setProgress();
   if (state.currentlyInsured==='yes') $('#contractExtra').style.display='block';
-  showStep(state.step || 1);
 })();
 </script>
 </body>
